@@ -2,26 +2,34 @@
  * Created by xmityaz on 02.06.16.
  */
 
-import { context, initCanvas } from './canvas';
-import { drawArray, clearCanvas } from './visualize';
-import { bubbleSort } from './sort';
+import { context, initCanvas } from './js/canvas';
+import { drawArray, clearCanvas, drawActiveItems } from './js/visualize';
+import { bubbleSort, bogoSort } from './js/sort';
+import { shuffle, initArray } from './js/utils';
 
 initCanvas();
 
-const testArray = [5, 1, 9, 10, 2, 12, 8, 3, 4, 6, 7, 11];
-const iterator = bubbleSort(testArray);
+function visualize(sortAlg, len) {
+  const testArray = initArray(len);
+  const iterator = sortAlg(shuffle(testArray));
 
-function visualize() {
+  tick(iterator);
+}
+
+function tick(iterator) {
   const next = iterator.next();
+  const { value: {arr, items}, done } = next;
 
-  if (next.done) {
+  clearCanvas(context);
+  drawArray(context, arr);
+
+  items && drawActiveItems(context, arr, items);
+
+  if (done) {
     return;
   }
 
-  clearCanvas(context);
-  drawArray(context, next.value);
-
-  requestAnimationFrame(visualize);
+  requestAnimationFrame(tick.bind(null, iterator));
 }
 
-visualize();
+visualize(bubbleSort, 50);
