@@ -4,7 +4,7 @@
 
 const canvas = document.getElementById('sort-visualizer');
 
-export const width = window.innerWidth;
+export const width = window.innerWidth - 200;
 export const height = window.innerHeight / 2;
 export const context = canvas.getContext('2d');
 

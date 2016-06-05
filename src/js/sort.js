@@ -30,3 +30,8 @@ export function* bogoSort(arr, cond = a => a.toString() === initArray(a.length).
 
   return { arr }
 }
+
+export const availableAlgorithms = {
+  bubbleSort,
+  bogoSort,
+};

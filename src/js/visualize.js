@@ -2,17 +2,16 @@
  * Created by xmityaz on 02.06.16.
  */
 
-import { width, height } from './canvas';
+import { width, height, context } from './canvas';
+import { shuffle, initArray } from './utils';
 
 export function clearCanvas(ctx) {
   ctx.clearRect(0, 0, width, height);
 }
 
 function calcDrawValues(arr) {
-  const maxEl = Math.max.apply(this, arr);
-
   return {
-    verticalStep: Math.round(height / maxEl),
+    verticalStep: Math.round(height / (arr.length + 2)),
     itemWidth: width / arr.length / 2,
     distance: width / arr.length,
   };
@@ -50,4 +49,27 @@ export function drawActiveItems(ctx, arr, items) {
 function drawLine(ctx, x, y, Y) {
   ctx.moveTo(x, y);
   ctx.lineTo(x, Y);
+}
+
+function tick(iterator) {
+  const next = iterator.next();
+  const { value: {arr, items}, done } = next;
+
+  clearCanvas(context);
+  drawArray(context, arr);
+
+  items && drawActiveItems(context, arr, items);
+
+  if (done) {
+    return;
+  }
+
+  requestAnimationFrame(tick.bind(null, iterator));
+}
+
+export default function (sortAlg, len) {
+  const testArray = initArray(len);
+  const iterator = sortAlg(shuffle(testArray));
+
+  tick(iterator);
 }
