@@ -8,6 +8,22 @@ export function* bubbleSort(arr, cond = (a, b) => a > b) {
   yield { arr };
 
   for (let i = 0; i < arr.length - 1; i++) {
+    for (let j = 0; j < arr.length - i - 1; j++) {
+      if (cond(arr[j], arr[j + 1])) {
+        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+      }
+
+      yield { arr, items: [j, j + 1] };
+    }
+  }
+
+  return { arr };
+}
+
+export function* strangeSort(arr, cond = (a, b) => a > b) {
+  yield { arr };
+
+  for (let i = 0; i < arr.length - 1; i++) {
     for (let j = i; j < arr.length; j++) {
       if (cond(arr[i], arr[j])) {
         [arr[i], arr[j]] = [arr[j], arr[i]];
@@ -18,6 +34,53 @@ export function* bubbleSort(arr, cond = (a, b) => a > b) {
   }
 
   return { arr };
+}
+
+export function* selectSort(arr, cond = (a, b) => a > b) {
+  yield { arr };
+  let min;
+  let idx;
+
+  for (let i = 0; i < arr.length - 1; i++) {
+    min = arr[i];
+    for (let j = i; j < arr.length; j++) {
+      if (!cond(arr[j], min)) {
+        min = arr[j];
+        idx = j;
+      }
+      yield { arr, items: [i, j, idx] };
+    }
+    [arr[i], arr[idx]] = [arr[idx], arr[i]];
+  }
+
+  return { arr };
+}
+
+export function* gnomeSort(arr, cond = (a, b) => a > b) {
+  yield { arr };
+  let i = 1;
+  let last = 0;
+
+  while (i < arr.length) {
+    if (!cond(arr[i - 1], arr[i])) {
+      yield { arr, items: [i, i - 1] };
+      if (last > ++i) {
+        i = last;
+      } else {
+        last = i;
+      }
+      //i++;
+    } else {
+      [arr[i], arr[i - 1]] = [arr[i - 1], arr[i]];
+      yield { arr, items: [i, i - 1] };
+      i--;
+    }
+
+    yield { arr, items: [i, i + 1] };
+  }
+
+  return { arr };
+
 }
 
 export function* bogoSort(arr, cond = a => a.toString() === initArray(a.length).toString()) {
@@ -33,5 +96,8 @@ export function* bogoSort(arr, cond = a => a.toString() === initArray(a.length).
 
 export const availableAlgorithms = {
   bubbleSort,
+  gnomeSort,
+  strangeSort,
+  selectSort,
   bogoSort,
 };

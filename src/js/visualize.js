@@ -11,20 +11,19 @@ export function clearCanvas(ctx) {
 
 function calcDrawValues(arr) {
   return {
-    verticalStep: Math.round(height / (arr.length + 2)),
+    verticalStep: Math.floor(height / arr.length),
     itemWidth: width / arr.length / 2,
     distance: width / arr.length,
   };
 }
 
 export function drawArray(ctx, arr) {
-  const { verticalStep, itemWidth, distance } =calcDrawValues(arr);
+  const { verticalStep, itemWidth, distance } = calcDrawValues(arr);
 
   ctx.beginPath();
 
-  arr.forEach((item, idx) => {
-    drawLine(ctx, distance * (idx + 0.5), height, height - verticalStep * item);
-  });
+  arr.forEach((item, idx) =>
+    drawLine(ctx, distance * (idx + 0.5), height, height - verticalStep * item));
 
   ctx.lineWidth = itemWidth;
   ctx.strokeStyle = '#000000';
@@ -32,18 +31,16 @@ export function drawArray(ctx, arr) {
 }
 
 export function drawActiveItems(ctx, arr, items) {
-  const { verticalStep, itemWidth, distance } =calcDrawValues(arr);
+  const { verticalStep, itemWidth, distance } = calcDrawValues(arr);
 
   ctx.beginPath();
 
-  items.forEach(idx => {
-    drawLine(ctx, distance * (idx + 0.5), height, height - verticalStep * arr[idx]);
-  });
+  items.forEach(idx =>
+    drawLine(ctx, distance * (idx + 0.5), height, height - verticalStep * arr[idx]));
 
   ctx.lineWidth = itemWidth;
   ctx.strokeStyle = '#ff0000';
   ctx.stroke();
-
 }
 
 function drawLine(ctx, x, y, Y) {
