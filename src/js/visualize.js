@@ -64,6 +64,10 @@ function tick(iterator) {
   requestAnimationFrame(tick.bind(null, iterator));
 }
 
+// Visualize main function
+//
+// @sortAlg - sorting function to visualize
+// @len     - length of visualization array
 export default function (sortAlg, len) {
   const testArray = initArray(len);
   const iterator = sortAlg(shuffle(testArray));

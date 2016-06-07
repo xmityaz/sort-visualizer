@@ -20,21 +20,6 @@ export function* bubbleSort(arr, cond = (a, b) => a > b) {
   return { arr };
 }
 
-export function* strangeSort(arr, cond = (a, b) => a > b) {
-  yield { arr };
-
-  for (let i = 0; i < arr.length - 1; i++) {
-    for (let j = i; j < arr.length; j++) {
-      if (cond(arr[i], arr[j])) {
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-
-      yield { arr, items: [i, j] };
-    }
-  }
-
-  return { arr };
-}
 
 export function* selectSort(arr, cond = (a, b) => a > b) {
   yield { arr };
@@ -64,16 +49,16 @@ export function* gnomeSort(arr, cond = (a, b) => a > b) {
   while (i < arr.length) {
     if (!cond(arr[i - 1], arr[i])) {
       yield { arr, items: [i, i - 1] };
+
       if (last > ++i) {
         i = last;
       } else {
         last = i;
       }
-      //i++;
     } else {
       [arr[i], arr[i - 1]] = [arr[i - 1], arr[i]];
-      yield { arr, items: [i, i - 1] };
-      i--;
+
+      yield { arr, items: [i, --i] };
     }
 
     yield { arr, items: [i, i + 1] };
@@ -81,6 +66,36 @@ export function* gnomeSort(arr, cond = (a, b) => a > b) {
 
   return { arr };
 
+}
+
+export function* cocktailSort(arr, cond = (a, b) => a > b) {
+  yield { arr };
+
+  let right = arr.length - 1;
+  let left = 0;
+
+  while (left < right) {
+    for (let j = left; j < right; j++) {
+      if (cond(arr[j], arr[j + 1])) {
+        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+      }
+
+      yield { arr, items: [j, j + 1] };
+    }
+    right--;
+
+    for (let j = right; j > left; j--) {
+      if (cond(arr[j - 1], arr[j])) {
+        [arr[j], arr[j - 1]] = [arr[j - 1], arr[j]];
+      }
+
+      yield { arr, items: [j, j - 1] };
+    }
+
+    left++;
+  }
+
+  return { arr };
 }
 
 export function* bogoSort(arr, cond = a => a.toString() === initArray(a.length).toString()) {
@@ -94,10 +109,27 @@ export function* bogoSort(arr, cond = a => a.toString() === initArray(a.length).
   return { arr }
 }
 
+export function* strangeSort(arr, cond = (a, b) => a > b) {
+  yield { arr };
+
+  for (let i = 0; i < arr.length - 1; i++) {
+    for (let j = i; j < arr.length; j++) {
+      if (cond(arr[i], arr[j])) {
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+
+      yield { arr, items: [i, j] };
+    }
+  }
+
+  return { arr };
+}
+
 export const availableAlgorithms = {
   bubbleSort,
   gnomeSort,
-  strangeSort,
+  //strangeSort,
   selectSort,
+  cocktailSort,
   bogoSort,
 };
