@@ -68,6 +68,24 @@ export function* gnomeSort(arr, cond = (a, b) => a > b) {
 
 }
 
+export function* insertionSort(arr, cond = (a, b) => a > b) {
+  yield { arr };
+
+  for (var i = 0; i < arr.length; i++) {
+    let temp = arr[i];
+
+    for (var j = i - 1; j >= 0 && cond(arr[j], temp); j--) {
+      arr[j + 1] = arr[j];
+
+      yield { arr, items: [i, j] };
+    }
+
+    arr[j + 1] = temp;
+  }
+
+  return { arr };
+}
+
 export function* cocktailSort(arr, cond = (a, b) => a > b) {
   yield { arr };
 
@@ -127,9 +145,10 @@ export function* strangeSort(arr, cond = (a, b) => a > b) {
 
 export const availableAlgorithms = {
   bubbleSort,
+  selectSort,
+  insertionSort,
   gnomeSort,
   //strangeSort,
-  selectSort,
   cocktailSort,
   bogoSort,
 };
