@@ -116,6 +116,86 @@ export function* cocktailSort(arr, cond = (a, b) => a > b) {
   return { arr };
 }
 
+// helper functions for mergeSort
+//
+function divideArr(arr) {
+  const mid = Math.floor(arr.length / 2);
+
+  return { left: arr.slice(0, mid), right: arr.slice(mid) };
+}
+
+function* mergeSortedArrays(left, right, cond, idx) {
+  let res = [];
+  let temp;
+
+  while (left.length && right.length) {
+    temp = cond(right[0], left[0]) ? left.shift() : right.shift();
+    res.push(temp);
+
+    yield {
+      arr: res.concat(left).concat(right),
+      items: [idx + res.length, idx + left.length + res.length],
+      idx
+    };
+  }
+
+  if (left.length) {
+    res = res.concat(left);
+  } else if (right.length) {
+    res = res.concat(right);
+  }
+
+  return { arr: res, idx };
+}
+
+
+// Merge sorting algorithm function
+//
+// @arr  - unsorted array
+// @cond - sorting condition
+// @idx  - index from which extracted @arr part from initial array
+//
+export function* mergeSortAlg(arr, cond = (a, b) => a > b, idx = 0) {
+  let res;
+
+  if (arr.length === 1) {
+    return { arr, idx };
+  }
+  else {
+    yield { arr, idx };
+
+    const {left, right} = divideArr(arr);
+
+    const leftGen = yield* mergeSortAlg(left, cond, idx);
+    yield { arr: leftGen.arr, idx };
+
+    const rightGen = yield* mergeSortAlg(right, cond, idx + left.length);
+    yield { arr: rightGen.arr, idx: idx + left.length };
+
+    res = yield* mergeSortedArrays(leftGen.arr, rightGen.arr, cond, idx);
+  }
+
+  return res;
+}
+
+// Functions which runs actual mergeSort algorithm and keeps array indivisible if mergeSortAlg
+// yields just a small part of initial array
+//
+export function* mergeSort(arr, cond = (a, b) => a > b) {
+  for (let step of mergeSortAlg(arr, cond, 0)) {
+    const {idx, items} = step;
+    const nextArr = step.arr;
+
+    arr = arr.slice(0, idx)
+      .concat(nextArr)
+      .concat(arr.slice(idx + nextArr.length));
+
+    yield { arr, items };
+  }
+
+  return { arr };
+}
+
 export function* bogoSort(arr, cond = a => a.toString() === initArray(a.length).toString()) {
   yield { arr };
 
@@ -150,5 +230,6 @@ export const availableAlgorithms = {
   gnomeSort,
   //strangeSort,
   cocktailSort,
+  mergeSort,
   bogoSort,
 };
