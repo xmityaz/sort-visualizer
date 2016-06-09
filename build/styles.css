@@ -1,0 +1,35 @@
+* {
+  box-sizing: border-box;
+}
+
+body, html {
+  margin: 0;
+}
+
+.wrapper {
+  display: flex;
+}
+
+.form {
+  height: 500px;
+  padding: 20px
+}
+
+.form-section + .form-section {
+  display: block;
+  margin-top: 12px;
+}
+
+.label {
+  display: inline-block;
+  padding-bottom: 8px;
+}
+
+.form-input {
+  width: 100%;
+}
+
+.sort-btn {
+  float: right;
+  margin-top: 12px;
+}

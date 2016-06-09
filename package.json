@@ -4,6 +4,7 @@
   "description": "Visualization of sort algorithms on browser canvas",
   "main": "index.js",
   "scripts": {
+    "build": "webpack --config webpack.config.js",
     "start": "webpack-dev-server --inline --hot --content-base src",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

@@ -13,8 +13,8 @@ module.exports = {
     css: './styles.css',
   },
   output: {
-    path: './bin',
-    file: 'bundle.js',
+    path: path.join(__dirname, './build'),
+    filename: 'bundle.js',
   },
   module: {
     loaders: [
