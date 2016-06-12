@@ -5,6 +5,9 @@
 import { width, height, context } from './canvas';
 import { shuffle, initArray } from './utils';
 
+// Variable, which holds requestAnimationFrame instance
+let vizRequestId = null;
+
 export function clearCanvas(ctx) {
   ctx.clearRect(0, 0, width, height);
 }
@@ -48,6 +51,9 @@ function drawLine(ctx, x, y, Y) {
   ctx.lineTo(x, Y);
 }
 
+// Function which draws each animation frame.
+// At the end it calls requestAnimationFrame with itself in the arguments to start animation
+//
 function tick(iterator) {
   const next = iterator.next();
   const { value: {arr, items}, done } = next;
@@ -58,10 +64,11 @@ function tick(iterator) {
   items && drawActiveItems(context, arr, items);
 
   if (done) {
+    vizRequestId = null;
     return;
   }
 
-  requestAnimationFrame(tick.bind(null, iterator));
+  vizRequestId = requestAnimationFrame(tick.bind(null, iterator));
 }
 
 // Visualize main function
@@ -71,6 +78,11 @@ function tick(iterator) {
 export default function (sortAlg, len) {
   const testArray = initArray(len);
   const iterator = sortAlg(shuffle(testArray));
+
+  // Stop pending visualization if there is some
+  if (vizRequestId) {
+    cancelAnimationFrame(vizRequestId);
+  }
 
   tick(iterator);
 }
