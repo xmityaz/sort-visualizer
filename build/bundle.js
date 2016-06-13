@@ -100,17 +100,18 @@
 	
 	var _sort = __webpack_require__(38);
 	
+	var _canvas = __webpack_require__(1);
+	
 	var _visualize = __webpack_require__(73);
 	
 	var _visualize2 = _interopRequireDefault(_visualize);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	/**
-	 * Created by xmityaz on 05.06.16.
-	 */
+	var form = document.forms[0]; /**
+	                               * Created by xmityaz on 05.06.16.
+	                               */
 	
-	var form = document.forms[0];
 	var arrLengthEl = form.elements.arrLength;
 	var sortSelect = form.elements.sort;
 	
@@ -119,6 +120,14 @@
 	  (0, _keys2.default)(_sort.availableAlgorithms).forEach(function (alg) {
 	    sortSelect.appendChild(new Option(alg, alg));
 	  });
+	}
+	
+	function initArrLengthEl() {
+	  // Array length shouldn't be more then half of canvas width or it height
+	  arrLengthEl.max = Math.min(Math.floor(_canvas.width / 2), _canvas.height);
+	
+	  // Default value
+	  arrLengthEl.value = 40;
 	}
 	
 	function initSortButton() {
@@ -135,7 +144,7 @@
 	function initForm() {
 	  initSortOptions();
 	
-	  arrLengthEl.value = 20;
+	  initArrLengthEl();
 	  initSortButton();
 	}
 
@@ -2727,6 +2736,11 @@
 	  var testArray = (0, _utils.initArray)(len);
 	  var iterator = sortAlg((0, _utils.shuffle)(testArray));
 	
+	  // Stop pending visualization if there is some
+	  if (vizRequestId) {
+	    cancelAnimationFrame(vizRequestId);
+	  }
+	
 	  tick(iterator);
 	};
 	
@@ -2734,9 +2748,12 @@
 	
 	var _utils = __webpack_require__(65);
 	
+	// Variable, which holds requestAnimationFrame instance
 	/**
 	 * Created by xmityaz on 02.06.16.
 	 */
+	
+	var vizRequestId = null;
 	
 	function clearCanvas(ctx) {
 	  ctx.clearRect(0, 0, _canvas.width, _canvas.height);
@@ -2793,6 +2810,9 @@
 	  ctx.lineTo(x, Y);
 	}
 	
+	// Function which draws each animation frame.
+	// At the end it calls requestAnimationFrame with itself in the arguments to start animation
+	//
 	function tick(iterator) {
 	  var next = iterator.next();
 	  var _next$value = next.value;
@@ -2807,10 +2827,11 @@
 	  items && drawActiveItems(_canvas.context, arr, items);
 	
 	  if (done) {
+	    vizRequestId = null;
 	    return;
 	  }
 	
-	  requestAnimationFrame(tick.bind(null, iterator));
+	  vizRequestId = requestAnimationFrame(tick.bind(null, iterator));
 	}
 	
 	// Visualize main function
@@ -2820,4 +2841,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=js.js.map
+//# sourceMappingURL=bundle.js.map
