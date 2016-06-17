@@ -647,8 +647,8 @@
 	exports.gnomeSort = gnomeSort;
 	exports.insertionSort = insertionSort;
 	exports.cocktailSort = cocktailSort;
-	exports.mergeSortAlg = mergeSortAlg;
 	exports.mergeSort = mergeSort;
+	exports.processRecursiveSort = processRecursiveSort;
 	exports.bogoSort = bogoSort;
 	exports.strangeSort = strangeSort;
 	
@@ -656,9 +656,9 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var _marked = [bubbleSort, selectSort, gnomeSort, insertionSort, cocktailSort, mergeSortedArrays, mergeSortAlg, mergeSort, bogoSort, strangeSort].map(_regenerator2.default.mark); /**
-	                                                                                                                                                                                    * Created by xmityaz on 02.06.16.
-	                                                                                                                                                                                    */
+	var _marked = [bubbleSort, selectSort, gnomeSort, insertionSort, cocktailSort, mergeSortedArrays, mergeSort, qsDevideArr, quickSort, processRecursiveSort, bogoSort, strangeSort].map(_regenerator2.default.mark); /**
+	                                                                                                                                                                                                                    * Created by xmityaz on 02.06.16.
+	                                                                                                                                                                                                                    */
 	
 	function bubbleSort(arr) {
 	  var cond = arguments.length <= 1 || arguments[1] === undefined ? function (a, b) {
@@ -1065,7 +1065,7 @@
 	// @cond - sorting condition
 	// @idx  - index from which extracted @arr part from initial array
 	//
-	function mergeSortAlg(arr) {
+	function mergeSort(arr) {
 	  var cond = arguments.length <= 1 || arguments[1] === undefined ? function (a, b) {
 	    return a > b;
 	  } : arguments[1];
@@ -1073,7 +1073,7 @@
 	
 	  var res, _divideArr, left, right, leftGen, rightGen;
 	
-	  return _regenerator2.default.wrap(function mergeSortAlg$(_context7) {
+	  return _regenerator2.default.wrap(function mergeSort$(_context7) {
 	    while (1) {
 	      switch (_context7.prev = _context7.next) {
 	        case 0:
@@ -1094,7 +1094,7 @@
 	          _divideArr = divideArr(arr);
 	          left = _divideArr.left;
 	          right = _divideArr.right;
-	          return _context7.delegateYield(mergeSortAlg(left, cond, idx), 't0', 11);
+	          return _context7.delegateYield(mergeSort(left, cond, idx), 't0', 11);
 	
 	        case 11:
 	          leftGen = _context7.t0;
@@ -1102,7 +1102,7 @@
 	          return { arr: leftGen.arr, idx: idx };
 	
 	        case 14:
-	          return _context7.delegateYield(mergeSortAlg(right, cond, idx + left.length), 't1', 15);
+	          return _context7.delegateYield(mergeSort(right, cond, idx + left.length), 't1', 15);
 	
 	        case 15:
 	          rightGen = _context7.t1;
@@ -1126,29 +1126,138 @@
 	  }, _marked[6], this);
 	}
 	
-	// Functions which runs actual mergeSort algorithm and keeps array indivisible if mergeSortAlg
-	// yields just a small part of initial array
+	// Function which takes an array and index of pivot element and returns as a result array with
+	// all elements less or equal to pivot at the left side and elements more then pivot ot the
+	// right side
 	//
-	function mergeSort(arr) {
+	// @arr - unsorted array
+	// @pivotIdx - index of pivot element
+	// @cond - sorting condition
+	// @idx  - index from which extracted @arr part from initial array
+	//
+	function qsDevideArr(arr) {
+	  var pivotIdx = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
+	  var cond = arguments[2];
+	  var idx = arguments[3];
+	  var pivot, lessThenPivot, moreThenPivot, el;
+	  return _regenerator2.default.wrap(function qsDevideArr$(_context8) {
+	    while (1) {
+	      switch (_context8.prev = _context8.next) {
+	        case 0:
+	          pivot = arr[pivotIdx];
+	          lessThenPivot = [];
+	          moreThenPivot = [];
+	
+	        case 3:
+	          if (!arr.length) {
+	            _context8.next = 10;
+	            break;
+	          }
+	
+	          el = arr.pop();
+	
+	
+	          if (cond(el, pivot)) {
+	            moreThenPivot.push(el);
+	          } else {
+	            lessThenPivot.push(el);
+	          }
+	
+	          _context8.next = 8;
+	          return {
+	            idx: idx,
+	            arr: lessThenPivot.concat(arr).concat(moreThenPivot),
+	            items: [lessThenPivot.length ? lessThenPivot.length + idx : idx + pivotIdx, idx + arr.length + -1]
+	          };
+	
+	        case 8:
+	          _context8.next = 3;
+	          break;
+	
+	        case 10:
+	          return _context8.abrupt('return', {
+	            arr: lessThenPivot.concat(moreThenPivot),
+	            divide: lessThenPivot.length // index at which array has been divided
+	          });
+	
+	        case 11:
+	        case 'end':
+	          return _context8.stop();
+	      }
+	    }
+	  }, _marked[7], this);
+	}
+	
+	function quickSort(arr) {
 	  var cond = arguments.length <= 1 || arguments[1] === undefined ? function (a, b) {
 	    return a > b;
 	  } : arguments[1];
+	  var idx = arguments.length <= 2 || arguments[2] === undefined ? 0 : arguments[2];
+	  var res, left, right;
+	  return _regenerator2.default.wrap(function quickSort$(_context9) {
+	    while (1) {
+	      switch (_context9.prev = _context9.next) {
+	        case 0:
+	          res = void 0;
+	
+	          if (!(arr.length <= 1)) {
+	            _context9.next = 5;
+	            break;
+	          }
+	
+	          return _context9.abrupt('return', { arr: arr, idx: idx });
+	
+	        case 5:
+	          _context9.next = 7;
+	          return { arr: arr, idx: idx };
+	
+	        case 7:
+	          return _context9.delegateYield(qsDevideArr(arr, arr.length - 1, cond, idx), 't0', 8);
+	
+	        case 8:
+	          res = _context9.t0;
+	          left = res.arr.slice(0, res.divide);
+	          return _context9.delegateYield(quickSort(left, cond, idx), 't1', 11);
+	
+	        case 11:
+	          right = res.arr.slice(res.divide);
+	          return _context9.delegateYield(quickSort(right, cond, idx + res.divide), 't2', 13);
+	
+	        case 13:
+	        case 'end':
+	          return _context9.stop();
+	      }
+	    }
+	  }, _marked[8], this);
+	}
+	
+	// Functions which runs actual recursive sort algorithm and keeps array indivisible if algorithm
+	// yields just a small part of initial array
+	//
+	// @sortAlg - recursive sorting algorithm
+	// @arr     - unsorted array
+	// @cond    - sorting condition
+	//
+	function processRecursiveSort(sortAlg, arr) {
+	  var cond = arguments.length <= 2 || arguments[2] === undefined ? function (a, b) {
+	    return a > b;
+	  } : arguments[2];
 	
 	  var _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, step, idx, items, nextArr;
 	
-	  return _regenerator2.default.wrap(function mergeSort$(_context8) {
+	  return _regenerator2.default.wrap(function processRecursiveSort$(_context10) {
 	    while (1) {
-	      switch (_context8.prev = _context8.next) {
+	      switch (_context10.prev = _context10.next) {
 	        case 0:
 	          _iteratorNormalCompletion = true;
 	          _didIteratorError = false;
 	          _iteratorError = undefined;
-	          _context8.prev = 3;
-	          _iterator = (0, _getIterator3.default)(mergeSortAlg(arr, cond, 0));
+	          _context10.prev = 3;
+	          _iterator = (0, _getIterator3.default)(sortAlg(arr, cond, 0));
 	
 	        case 5:
 	          if (_iteratorNormalCompletion = (_step = _iterator.next()).done) {
-	            _context8.next = 16;
+	            _context10.next = 16;
 	            break;
 	          }
 	
@@ -1160,93 +1269,93 @@
 	
 	          arr = arr.slice(0, idx).concat(nextArr).concat(arr.slice(idx + nextArr.length));
 	
-	          _context8.next = 13;
+	          _context10.next = 13;
 	          return { arr: arr, items: items };
 	
 	        case 13:
 	          _iteratorNormalCompletion = true;
-	          _context8.next = 5;
+	          _context10.next = 5;
 	          break;
 	
 	        case 16:
-	          _context8.next = 22;
+	          _context10.next = 22;
 	          break;
 	
 	        case 18:
-	          _context8.prev = 18;
-	          _context8.t0 = _context8['catch'](3);
+	          _context10.prev = 18;
+	          _context10.t0 = _context10['catch'](3);
 	          _didIteratorError = true;
-	          _iteratorError = _context8.t0;
+	          _iteratorError = _context10.t0;
 	
 	        case 22:
-	          _context8.prev = 22;
-	          _context8.prev = 23;
+	          _context10.prev = 22;
+	          _context10.prev = 23;
 	
 	          if (!_iteratorNormalCompletion && _iterator.return) {
 	            _iterator.return();
 	          }
 	
 	        case 25:
-	          _context8.prev = 25;
+	          _context10.prev = 25;
 	
 	          if (!_didIteratorError) {
-	            _context8.next = 28;
+	            _context10.next = 28;
 	            break;
 	          }
 	
 	          throw _iteratorError;
 	
 	        case 28:
-	          return _context8.finish(25);
+	          return _context10.finish(25);
 	
 	        case 29:
-	          return _context8.finish(22);
+	          return _context10.finish(22);
 	
 	        case 30:
-	          return _context8.abrupt('return', { arr: arr });
+	          return _context10.abrupt('return', { arr: arr });
 	
 	        case 31:
 	        case 'end':
-	          return _context8.stop();
+	          return _context10.stop();
 	      }
 	    }
-	  }, _marked[7], this, [[3, 18, 22, 30], [23,, 25, 29]]);
+	  }, _marked[9], this, [[3, 18, 22, 30], [23,, 25, 29]]);
 	}
 	
 	function bogoSort(arr) {
 	  var cond = arguments.length <= 1 || arguments[1] === undefined ? function (a) {
 	    return a.toString() === (0, _utils.initArray)(a.length).toString();
 	  } : arguments[1];
-	  return _regenerator2.default.wrap(function bogoSort$(_context9) {
+	  return _regenerator2.default.wrap(function bogoSort$(_context11) {
 	    while (1) {
-	      switch (_context9.prev = _context9.next) {
+	      switch (_context11.prev = _context11.next) {
 	        case 0:
-	          _context9.next = 2;
+	          _context11.next = 2;
 	          return { arr: arr };
 	
 	        case 2:
 	          if (cond(arr)) {
-	            _context9.next = 8;
+	            _context11.next = 8;
 	            break;
 	          }
 	
 	          arr = (0, _utils.shuffle)(arr);
-	          _context9.next = 6;
+	          _context11.next = 6;
 	          return { arr: arr };
 	
 	        case 6:
-	          _context9.next = 2;
+	          _context11.next = 2;
 	          break;
 	
 	        case 8:
-	          return _context9.abrupt('return', { arr: arr });
+	          return _context11.abrupt('return', { arr: arr });
 	
 	        case 9:
 	        case 'end':
-	          return _context9.stop();
+	          return _context11.stop();
 	      }
 	    }
-	  }, _marked[8], this);
+	  }, _marked[10], this);
 	}
 	
 	function strangeSort(arr) {
@@ -1256,11 +1365,11 @@
 	
 	  var i, j, _ref6;
 	
-	  return _regenerator2.default.wrap(function strangeSort$(_context10) {
+	  return _regenerator2.default.wrap(function strangeSort$(_context12) {
 	    while (1) {
-	      switch (_context10.prev = _context10.next) {
+	      switch (_context12.prev = _context12.next) {
 	        case 0:
-	          _context10.next = 2;
+	          _context12.next = 2;
 	          return { arr: arr };
 	
 	        case 2:
@@ -1268,7 +1377,7 @@
 	
 	        case 3:
 	          if (!(i < arr.length - 1)) {
-	            _context10.next = 15;
+	            _context12.next = 15;
 	            break;
 	          }
 	
@@ -1276,7 +1385,7 @@
 	
 	        case 5:
 	          if (!(j < arr.length)) {
-	            _context10.next = 12;
+	            _context12.next = 12;
 	            break;
 	          }
 	
@@ -1286,28 +1395,28 @@
 	            arr[j] = _ref6[1];
 	          }
 	
-	          _context10.next = 9;
+	          _context12.next = 9;
 	          return { arr: arr, items: [i, j] };
 	
 	        case 9:
 	          j++;
-	          _context10.next = 5;
+	          _context12.next = 5;
 	          break;
 	
 	        case 12:
 	          i++;
-	          _context10.next = 3;
+	          _context12.next = 3;
 	          break;
 	
 	        case 15:
-	          return _context10.abrupt('return', { arr: arr });
+	          return _context12.abrupt('return', { arr: arr });
 	
 	        case 16:
 	        case 'end':
-	          return _context10.stop();
+	          return _context12.stop();
 	      }
 	    }
-	  }, _marked[9], this);
+	  }, _marked[11], this);
 	}
 	
 	var availableAlgorithms = exports.availableAlgorithms = {
@@ -1317,7 +1426,8 @@
 	  gnomeSort: gnomeSort,
 	  //strangeSort,
 	  cocktailSort: cocktailSort,
-	  mergeSort: mergeSort,
+	  mergeSort: processRecursiveSort.bind(null, mergeSort),
+	  quickSort: processRecursiveSort.bind(null, quickSort),
 	  bogoSort: bogoSort
 	};
 
