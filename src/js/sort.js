@@ -155,7 +155,7 @@ function* mergeSortedArrays(left, right, cond, idx) {
 // @cond - sorting condition
 // @idx  - index from which extracted @arr part from initial array
 //
-export function* mergeSortAlg(arr, cond = (a, b) => a > b, idx = 0) {
+export function* mergeSort(arr, cond = (a, b) => a > b, idx = 0) {
   let res;
 
   if (arr.length === 1) {
@@ -166,10 +166,10 @@ export function* mergeSortAlg(arr, cond = (a, b) => a > b, idx = 0) {
 
     const {left, right} = divideArr(arr);
 
-    const leftGen = yield* mergeSortAlg(left, cond, idx);
+    const leftGen = yield* mergeSort(left, cond, idx);
     yield { arr: leftGen.arr, idx };
 
-    const rightGen = yield* mergeSortAlg(right, cond, idx + left.length);
+    const rightGen = yield* mergeSort(right, cond, idx + left.length);
     yield { arr: rightGen.arr, idx: idx + left.length };
 
     res = yield* mergeSortedArrays(leftGen.arr, rightGen.arr, cond, idx);
@@ -178,11 +178,73 @@ export function* mergeSortAlg(arr, cond = (a, b) => a > b, idx = 0) {
   return res;
 }
 
-// Functions which runs actual mergeSort algorithm and keeps array indivisible if mergeSortAlg
+// Function which takes an array and index of pivot element and returns as a result array with
+// all elements less or equal to pivot at the left side and elements more then pivot ot the
+// right side
+//
+// @arr - unsorted array
+// @pivotIdx - index of pivot element
+// @cond - sorting condition
+// @idx  - index from which extracted @arr part from initial array
+//
+function* qsDevideArr(arr, pivotIdx = 0, cond, idx) {
+  const pivot = arr[pivotIdx];
+  let lessThenPivot = [];
+  let moreThenPivot = [];
+
+  while (arr.length) {
+    const el = arr.pop();
+
+    if (cond(el, pivot)) {
+      moreThenPivot.push(el);
+    } else {
+      lessThenPivot.push(el);
+    }
+
+    yield {
+      idx,
+      arr: lessThenPivot.concat(arr).concat(moreThenPivot),
+      items: [
+        lessThenPivot.length ? (lessThenPivot.length + idx) : (idx + pivotIdx),
+        idx + arr.length + -1
+      ]
+    };
+  }
+
+  return {
+    arr: lessThenPivot.concat(moreThenPivot),
+    divide: lessThenPivot.length  // index at which array has been divided
+  };
+}
+
+function* quickSort(arr, cond = (a, b) => a > b, idx = 0) {
+  let res;
+
+  if (arr.length <= 1) {
+    return { arr, idx };
+  }
+  else {
+    yield { arr, idx };
+
+    res = yield* qsDevideArr(arr, arr.length - 1, cond, idx);
+
+    const left = res.arr.slice(0, res.divide);
+    yield* quickSort(left, cond, idx);
+
+    const right = res.arr.slice(res.divide);
+    yield* quickSort(right, cond, idx + res.divide);
+  }
+}
+
+// Functions which runs actual recursive sort algorithm and keeps array indivisible if algorithm
 // yields just a small part of initial array
 //
-export function* mergeSort(arr, cond = (a, b) => a > b) {
-  for (let step of mergeSortAlg(arr, cond, 0)) {
+// @sortAlg - recursive sorting algorithm
+// @arr     - unsorted array
+// @cond    - sorting condition
+//
+export function* processRecursiveSort(sortAlg, arr, cond = (a, b) => a > b) {
+  for (let step of sortAlg(arr, cond, 0)) {
     const {idx, items} = step;
     const nextArr = step.arr;
 
@@ -230,6 +292,7 @@ export const availableAlgorithms = {
   gnomeSort,
   //strangeSort,
   cocktailSort,
-  mergeSort,
+  mergeSort: processRecursiveSort.bind(null, mergeSort),
+  quickSort: processRecursiveSort.bind(null, quickSort),
   bogoSort,
 };
